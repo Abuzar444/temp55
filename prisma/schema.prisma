@@ -1,6 +1,6 @@
 datasource db {
-  provider          = "mongodb"
-  url               = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -8,7 +8,7 @@ generator client {
 }
 
 model Profile {
-  id           String     @id @default(uuid()) @map("_id") 
+  id           String     @id @default(uuid()) @map("_id") @db.ObjectId
   clerkId      String     @unique
   firstName    String
   lastName     String
@@ -17,12 +17,12 @@ model Profile {
   profileImage String
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-  properties Property[]
+  properties   Property[]
   favorites    Favorite[]
 }
 
 model Property {
-  id          String     @id @default(uuid()) @map("_id") 
+  id          String     @id @default(uuid()) @map("_id") @db.ObjectId
   name        String
   tagline     String
   category    String
@@ -38,19 +38,18 @@ model Property {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
-  profileId   String
-  favorites    Favorite[]
+  profileId   String     @db.ObjectId
+  favorites   Favorite[]
 }
 
 model Favorite {
-  id        String   @id @default(uuid()) @map("_id") 
+  id        String   @id @default(uuid()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  profile   Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profile   Profile @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   profileId String
 
-  property   Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  propertyId String 
-
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String   @db.ObjectId
 }
